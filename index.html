@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f78fb3" />
+  <title>Iza Space ✿</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">✿</div>
+        <div>
+          <strong>Iza Space</strong>
+          <span>social & life hub</span>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Navegação principal">
+        <button class="nav-link active" data-page="home"><span>⌂</span> Home</button>
+        <button class="nav-link" data-page="content"><span>✦</span> Content Studio</button>
+        <button class="nav-link" data-page="projects"><span>♡</span> Projects</button>
+        <button class="nav-link" data-page="ideas"><span>❀</span> Idea Garden</button>
+        <button class="nav-link" data-page="analytics"><span>⌁</span> Analytics</button>
+        <button class="nav-link" data-page="planner"><span>✓</span> Planner</button>
+        <button class="nav-link" data-page="myspace"><span>☾</span> My Space</button>
+      </nav>
+
+      <div class="sidebar-card">
+        <span class="mini-label">little reminder</span>
+        <p>Você não precisa transformar toda ideia em post hoje.</p>
+        <div class="tiny-hearts">♡ ✦ ♡</div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="avatar">IZ</div>
+        <div>
+          <strong>Izadora</strong>
+          <span>Social Media • IBAP-RJ</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="Abrir menu">☰</button>
+        <div class="topbar-copy">
+          <span id="todayLabel">Hoje</span>
+          <strong id="clockLabel">--:--</strong>
+        </div>
+        <button class="soft-btn" id="quickIdeaBtn">＋ ideia rápida</button>
+      </header>
+
+      <section class="page active" id="home">
+        <div class="hero-grid">
+          <article class="hero-card">
+            <span class="eyebrow">good afternoon, iza ♡</span>
+            <h1>Seu cantinho para criar,<br><em>organizar & respirar.</em></h1>
+            <p>Campanhas, ideias, tarefas e vida real no mesmo lugar — porque abrir 27 abas não conta como organização.</p>
+            <div class="hero-actions">
+              <button class="primary-btn" data-goto="content">Ver conteúdo da semana</button>
+              <button class="ghost-btn" data-goto="planner">Abrir planner</button>
+            </div>
+          </article>
+
+          <article class="mood-card">
+            <span class="eyebrow">mood de hoje</span>
+            <div class="mood-face" id="moodFace">🙂</div>
+            <p id="moodText">Como você está chegando hoje?</p>
+            <div class="mood-options" role="group" aria-label="Escolha seu humor">
+              <button data-mood="😴" data-label="Modo economia de energia">😴</button>
+              <button data-mood="☁️" data-label="Meio nublada, mas indo">☁️</button>
+              <button data-mood="🙂" data-label="De boas e funcionando">🙂</button>
+              <button data-mood="💖" data-label="Criativa e animada">💖</button>
+              <button data-mood="🔥" data-label="Hoje ninguém me segura">🔥</button>
+            </div>
+          </article>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card pink"><span>pendências de hoje</span><strong id="todayTasksCount">3</strong><small>vamos por partes ♡</small></article>
+          <article class="stat-card lilac"><span>aguardando aprovação</span><strong>2</strong><small>respira, não depende de você</small></article>
+          <article class="stat-card peach"><span>publicações hoje</span><strong>1</strong><small>Instagram • 18h</small></article>
+          <article class="stat-card cream"><span>ideias salvas</span><strong id="ideaCount">0</strong><small>seu jardim criativo</small></article>
+        </div>
+
+        <div class="dashboard-grid">
+          <article class="panel agenda-panel">
+            <div class="panel-head">
+              <div><span class="eyebrow">agenda</span><h2>Hoje</h2></div>
+              <button class="text-btn" data-goto="planner">ver tudo →</button>
+            </div>
+            <div class="timeline">
+              <div class="timeline-item"><time>09:30</time><span></span><div><strong>Planejamento de conteúdo</strong><small>IBAP-RJ</small></div></div>
+              <div class="timeline-item"><time>11:00</time><span></span><div><strong>Ajustes de peça institucional</strong><small>Design + copy</small></div></div>
+              <div class="timeline-item"><time>14:30</time><span></span><div><strong>Revisão da semana</strong><small>Conteúdo e prioridades</small></div></div>
+              <div class="timeline-item"><time>18:00</time><span></span><div><strong>Publicação programada</strong><small>Instagram</small></div></div>
+            </div>
+          </article>
+
+          <article class="panel content-panel">
+            <div class="panel-head"><div><span class="eyebrow">social pulse</span><h2>Conteúdo da semana</h2></div></div>
+            <div class="content-list">
+              <div class="content-row"><div class="platform ig">IG</div><div><strong>Carrossel institucional</strong><small>Instagram • Feed</small></div><span class="status producing">Produção</span></div>
+              <div class="content-row"><div class="platform re">RE</div><div><strong>Reel educativo</strong><small>Jogo Responsável</small></div><span class="status review">Aprovação</span></div>
+              <div class="content-row"><div class="platform li">in</div><div><strong>Post institucional</strong><small>LinkedIn</small></div><span class="status scheduled">Agendado</span></div>
+            </div>
+          </article>
+
+          <article class="panel idea-preview">
+            <div class="panel-head"><div><span class="eyebrow">idea dump</span><h2>Uma ideia não pode fugir</h2></div></div>
+            <form id="homeIdeaForm" class="inline-form">
+              <input id="homeIdeaInput" maxlength="120" placeholder="Escreve antes que você esqueça..." />
+              <button class="icon-btn" aria-label="Salvar ideia">＋</button>
+            </form>
+            <div class="idea-note">“Conteúdo bom não precisa gritar. Precisa chegar na pessoa certa.”</div>
+          </article>
+
+          <article class="panel focus-panel">
+            <span class="eyebrow">focus of the day</span>
+            <h2>Uma coisa de cada vez.</h2>
+            <div class="focus-ring"><span>01</span><small>prioridade</small></div>
+            <p>Finalizar o conteúdo mais importante antes de abrir uma nova frente.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="page" id="content">
+        <div class="page-title"><span class="eyebrow">content studio ✦</span><h1>Conteúdo sem caos.</h1><p>Planeje o que vai ao ar, em qual canal e em que etapa cada peça está.</p></div>
+        <div class="week-strip">
+          <button><span>SEG</span><strong>07</strong></button><button><span>TER</span><strong>08</strong></button><button><span>QUA</span><strong>09</strong></button><button class="today"><span>QUI</span><strong>10</strong></button><button><span>SEX</span><strong>11</strong></button>
+        </div>
+        <div class="kanban">
+          <div class="kanban-col"><div class="kanban-title"><span>Ideias</span><b>3</b></div><div class="kanban-card"><small>INSTAGRAM</small><strong>Bastidores do IBAP</strong><p>Reel mostrando rotina e equipe.</p><span>🎬 Reel</span></div><div class="kanban-card"><small>LINKEDIN</small><strong>Impacto institucional</strong><p>Post sobre projeto em andamento.</p><span>✍️ Texto</span></div></div>
+          <div class="kanban-col"><div class="kanban-title"><span>Em produção</span><b>2</b></div><div class="kanban-card featured"><small>JOGO RESPONSÁVEL</small><strong>Você sabe reconhecer os sinais?</strong><p>Carrossel educativo com linguagem simples.</p><span>🎨 Carrossel</span></div></div>
+          <div class="kanban-col"><div class="kanban-title"><span>Aprovação</span><b>2</b></div><div class="kanban-card"><small>IBAP-RJ</small><strong>Agenda institucional</strong><p>Arte pronta aguardando revisão final.</p><span>⏳ Revisão</span></div></div>
+          <div class="kanban-col"><div class="kanban-title"><span>Agendado</span><b>2</b></div><div class="kanban-card"><small>INSTAGRAM</small><strong>Post da semana</strong><p>Quinta-feira • 18h</p><span>✓ Programado</span></div></div>
+        </div>
+      </section>
+
+      <section class="page" id="projects">
+        <div class="page-title"><span class="eyebrow">projects ♡</span><h1>Campanhas & projetos.</h1><p>Uma visão simples do que está andando, do que precisa de atenção e do que já virou história.</p></div>
+        <div class="project-grid">
+          <article class="project-card"><div class="project-top"><span class="project-icon">🎮</span><span class="status producing">Ativo</span></div><h3>Jogo Responsável</h3><p>Conteúdo educativo, campanha e materiais para divulgação.</p><div class="progress"><span style="width:72%"></span></div><small>72% concluído</small></article>
+          <article class="project-card"><div class="project-top"><span class="project-icon">🏛️</span><span class="status scheduled">Contínuo</span></div><h3>Institucional IBAP</h3><p>Rotina de comunicação, agenda, projetos e posicionamento.</p><div class="progress"><span style="width:88%"></span></div><small>Fluxo em dia</small></article>
+          <article class="project-card"><div class="project-top"><span class="project-icon">💜</span><span class="status review">Planejamento</span></div><h3>Campanha temática</h3><p>Espaço reservado para a próxima campanha sazonal.</p><div class="progress"><span style="width:35%"></span></div><small>35% estruturado</small></article>
+        </div>
+      </section>
+
+      <section class="page" id="ideas">
+        <div class="page-title"><span class="eyebrow">idea garden ❀</span><h1>Plante ideias. Colha conteúdo.</h1><p>Guarde referências, pensamentos, formatos e qualquer ideia que ainda não sabe onde usar.</p></div>
+        <form id="ideaForm" class="big-idea-form"><textarea id="ideaInput" maxlength="240" placeholder="Qual foi a ideia que apareceu do nada?"></textarea><div><span id="ideaChars">0/240</span><button class="primary-btn">Plantar ideia ✿</button></div></form>
+        <div class="idea-grid" id="ideaGrid"></div>
+      </section>
+
+      <section class="page" id="analytics">
+        <div class="page-title"><span class="eyebrow">analytics ⌁</span><h1>Números que contam história.</h1><p>Um resumo visual para entender o que está funcionando sem transformar sua vida em uma planilha infinita.</p></div>
+        <div class="stats-grid analytics-stats"><article class="stat-card pink"><span>alcance</span><strong>48,2k</strong><small>↑ 18% este mês</small></article><article class="stat-card lilac"><span>engajamento</span><strong>6,8%</strong><small>↑ 1,2 p.p.</small></article><article class="stat-card peach"><span>novos seguidores</span><strong>+327</strong><small>últimos 30 dias</small></article><article class="stat-card cream"><span>conteúdos publicados</span><strong>24</strong><small>média de 6/semana</small></article></div>
+        <div class="analytics-grid"><article class="panel"><div class="panel-head"><div><span class="eyebrow">performance</span><h2>Alcance semanal</h2></div></div><div class="bar-chart"><div><span style="height:45%"></span><small>S</small></div><div><span style="height:62%"></span><small>T</small></div><div><span style="height:52%"></span><small>Q</small></div><div><span style="height:78%"></span><small>Q</small></div><div><span style="height:92%"></span><small>S</small></div><div><span style="height:66%"></span><small>S</small></div><div><span style="height:72%"></span><small>D</small></div></div></article><article class="panel winner"><span class="eyebrow">post campeão 🏆</span><h2>Carrossel educativo</h2><strong>12,4k</strong><p>contas alcançadas</p><div class="winner-meta"><span>♡ 846</span><span>↗ 129</span><span>▣ 214</span></div></article></div>
+      </section>
+
+      <section class="page" id="planner">
+        <div class="page-title"><span class="eyebrow">planner ✓</span><h1>Tira da cabeça. Coloca aqui.</h1><p>Um planner simples para organizar prioridades, pendências e aquele clássico “estou esperando alguém responder”.</p></div>
+        <form id="taskForm" class="task-form"><input id="taskInput" maxlength="100" placeholder="Adicionar nova tarefa..." /><select id="taskCategory"><option value="today">Hoje</option><option value="week">Essa semana</option><option value="waiting">Esperando alguém</option><option value="later">Depois</option></select><button class="primary-btn">Adicionar</button></form>
+        <div class="task-board" id="taskBoard"></div>
+      </section>
+
+      <section class="page" id="myspace">
+        <div class="page-title"><span class="eyebrow">my space ☾</span><h1>Nem tudo precisa ser trabalho.</h1><p>Um pedaço do hub só seu. Sem briefing, sem aprovação e sem “consegue subir ainda hoje?”.</p></div>
+        <div class="personal-grid">
+          <article class="panel quote-card"><span class="eyebrow">note to self</span><h2>Você também existe fora do feed.</h2><p>Descansar não é atraso. É manutenção preventiva da diva.</p></article>
+          <article class="panel"><div class="panel-head"><div><span class="eyebrow">after work</span><h2>Pequenos planos</h2></div></div><label class="check-item"><input type="checkbox"> <span>Ouvir uma playlist sem trabalhar junto</span></label><label class="check-item"><input type="checkbox"> <span>Assistir alguma coisa</span></label><label class="check-item"><input type="checkbox"> <span>Skincare + zero notificações</span></label><label class="check-item"><input type="checkbox"> <span>Fazer algo só porque deu vontade</span></label></article>
+          <article class="panel wishlist"><span class="eyebrow">wishlist</span><h2>Coisinhas que eu quero ♡</h2><div class="tag-cloud"><span>uma viagem</span><span>um dia de spa</span><span>livros novos</span><span>câmera</span><span>show</span><span>domingo sem alarme</span></div></article>
+          <article class="panel"><span class="eyebrow">brain dump</span><h2>Desocupa a mente.</h2><textarea class="brain-dump" id="brainDump" placeholder="Escreve qualquer coisa aqui. Sem organizar, sem julgar."></textarea><small class="saved-hint" id="brainSaved">salvo automaticamente ♡</small></article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="ideaModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" aria-label="Fechar">×</button>
+      <span class="eyebrow">ideia rápida ✦</span>
+      <h2 id="modalTitle">Não deixa essa ideia escapar.</h2>
+      <form id="modalIdeaForm"><textarea id="modalIdeaInput" maxlength="240" placeholder="Joga aqui e organiza depois..."></textarea><button class="primary-btn">Salvar no jardim</button></form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
