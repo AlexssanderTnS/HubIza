@@ -4,156 +4,36 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#ef78a3" />
-  <title>Iza Space ✿</title>
+  <title>Entrar • Iza Space ✿</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="enhancements.css" />
+  <link rel="stylesheet" href="login.css" />
 </head>
 <body>
-  <div class="lock-screen" id="lockScreen">
-    <div class="lock-card">
-      <div class="lock-mark">✿</div>
-      <span class="eyebrow">private little corner</span>
-      <h1 id="lockTitle">Iza Space</h1>
-      <p id="lockText">Entre no seu espaço pessoal.</p>
-      <form id="lockForm" class="lock-form">
-        <input id="lockPin" type="password" inputmode="numeric" autocomplete="current-password" maxlength="12" placeholder="Seu PIN" required />
-        <input id="lockPinConfirm" type="password" inputmode="numeric" maxlength="12" placeholder="Repita o PIN" hidden />
-        <button class="primary-btn" id="lockSubmit">Entrar ♡</button>
+  <main class="login-shell">
+    <span class="spark one">✦</span><span class="spark two">♡</span>
+    <section class="login-copy">
+      <div class="brand"><div class="brand-mark">✿</div><div><strong>Iza Space</strong><span>social & life hub</span></div></div>
+      <span class="eyebrow">welcome to your little corner</span>
+      <h1>Trabalho, ideias<br>e vida real em um só <em>lugar.</em></h1>
+      <p>Um espaço feito para a rotina da Iza: organizar conteúdo, acompanhar projetos, guardar ideias e ainda ter um cantinho só dela.</p>
+      <div class="login-note"><span>♡</span><p>A autenticação real fica para uma próxima etapa. Esta tela é a entrada visual do hub e não bloqueia o acesso direto por enquanto.</p></div>
+    </section>
+
+    <section class="login-card">
+      <span class="eyebrow">good to see you ♡</span>
+      <h2>Oi, Iza!</h2>
+      <p>Entre no seu espaço sem interromper o fluxo do dia.</p>
+      <form id="loginForm">
+        <label class="field"><span>Como quer aparecer hoje?</span><input id="displayName" type="text" value="Izadora" maxlength="40" autocomplete="name" /></label>
+        <label class="field"><span>Senha</span><input type="password" value="iza-space" aria-describedby="authNote" autocomplete="current-password" /></label>
+        <button class="enter-btn" type="submit">Entrar no Iza Space ✿</button>
       </form>
-      <small id="lockHint">O acesso fica protegido neste navegador.</small>
-    </div>
-  </div>
-
-  <div class="app-shell" id="appShell" hidden>
-    <aside class="sidebar" id="sidebar">
-      <div class="brand">
-        <div class="brand-mark">✿</div>
-        <div><strong>Iza Space</strong><span>social & life hub</span></div>
-      </div>
-
-      <nav class="nav" aria-label="Navegação principal">
-        <button class="nav-link active" data-page="home"><span>⌂</span> Home</button>
-        <button class="nav-link" data-page="content"><span>✦</span> Content Studio</button>
-        <button class="nav-link" data-page="projects"><span>♡</span> Projects</button>
-        <button class="nav-link" data-page="ideas"><span>❀</span> Idea Garden</button>
-        <button class="nav-link" data-page="analytics"><span>⌁</span> Analytics</button>
-        <button class="nav-link" data-page="planner"><span>✓</span> Planner</button>
-        <button class="nav-link" data-page="links"><span>↗</span> Links</button>
-        <button class="nav-link" data-page="myspace"><span>☾</span> My Space</button>
-        <button class="nav-link" data-page="settings"><span>⚙</span> Personalizar</button>
-      </nav>
-
-      <div class="sidebar-card"><span class="mini-label">little reminder</span><p id="reminderText">Você não precisa transformar toda ideia em post hoje.</p><div class="tiny-hearts">♡ ✦ ♡</div></div>
-
-      <div class="sidebar-footer">
-        <div class="avatar avatar-image" id="sidebarAvatar">IZ</div>
-        <div><strong id="sidebarName">Izadora</strong><span id="sidebarRole">Social Media • IBAP-RJ</span></div>
-      </div>
-    </aside>
-
-    <main class="main">
-      <header class="topbar">
-        <button class="menu-btn" id="menuBtn" aria-label="Abrir menu">☰</button>
-        <div class="topbar-copy"><span id="todayLabel">Hoje</span><strong id="clockLabel">--:--</strong></div>
-        <button class="soft-btn" id="quickIdeaBtn">＋ ideia rápida</button>
-        <button class="soft-btn" id="lockNowBtn">🔒 bloquear</button>
-      </header>
-
-      <section class="page active" id="home">
-        <div class="hero-grid">
-          <article class="hero-card">
-            <span class="eyebrow" id="greetingLabel">good afternoon, iza ♡</span>
-            <h1>Seu cantinho para criar,<br><em>organizar & respirar.</em></h1>
-            <p id="heroBio">Campanhas, ideias, tarefas e vida real no mesmo lugar — porque abrir 27 abas não conta como organização.</p>
-            <div class="hero-actions"><button class="primary-btn" data-goto="content">Ver conteúdo</button><button class="ghost-btn" data-goto="planner">Abrir planner</button></div>
-          </article>
-          <article class="mood-card">
-            <span class="eyebrow">mood de hoje</span><div class="mood-face" id="moodFace">🙂</div><p id="moodText">Como você está chegando hoje?</p>
-            <div class="mood-options"><button data-mood="😴" data-label="Modo economia de energia">😴</button><button data-mood="☁️" data-label="Meio nublada, mas indo">☁️</button><button data-mood="🙂" data-label="De boas e funcionando">🙂</button><button data-mood="💖" data-label="Criativa e animada">💖</button><button data-mood="🔥" data-label="Hoje ninguém me segura">🔥</button></div>
-          </article>
-        </div>
-
-        <div class="stats-grid">
-          <article class="stat-card pink"><span>pendências de hoje</span><strong id="todayTasksCount">0</strong><small>uma de cada vez ♡</small></article>
-          <article class="stat-card lilac"><span>aguardando aprovação</span><strong id="approvalCount">0</strong><small>conteúdos em revisão</small></article>
-          <article class="stat-card peach"><span>publicações planejadas</span><strong id="scheduledCount">0</strong><small>no calendário</small></article>
-          <article class="stat-card cream"><span>ideias salvas</span><strong id="ideaCount">0</strong><small>seu jardim criativo</small></article>
-        </div>
-
-        <div class="dashboard-grid">
-          <article class="panel agenda-panel"><div class="panel-head"><div><span class="eyebrow">agenda</span><h2>Próximos conteúdos</h2></div><button class="text-btn" data-goto="content">ver tudo →</button></div><div class="timeline" id="homeSchedule"></div></article>
-          <article class="panel content-panel"><div class="panel-head"><div><span class="eyebrow">social pulse</span><h2>Em andamento</h2></div></div><div class="content-list" id="homeContentList"></div></article>
-          <article class="panel idea-preview"><div class="panel-head"><div><span class="eyebrow">idea dump</span><h2>Uma ideia não pode fugir</h2></div></div><form id="homeIdeaForm" class="inline-form"><input id="homeIdeaInput" maxlength="120" placeholder="Escreve antes que você esqueça..." /><button class="icon-btn">＋</button></form><div class="idea-note" id="quoteCard">“Conteúdo bom não precisa gritar. Precisa chegar na pessoa certa.”</div></article>
-          <article class="panel focus-panel"><span class="eyebrow">focus of the day</span><h2 id="focusTitle">Uma coisa de cada vez.</h2><div class="focus-ring"><span>01</span><small>prioridade</small></div><p id="focusText">Escolha a tarefa que realmente precisa sair hoje.</p></article>
-        </div>
-      </section>
-
-      <section class="page" id="content">
-        <div class="page-title"><span class="eyebrow">content studio ✦</span><h1>Conteúdo sem caos.</h1><p>Cadastre posts, datas, links, canais e status. Tudo é editável.</p></div>
-        <form id="contentForm" class="content-form panel">
-          <input id="contentTitle" placeholder="Título do conteúdo" maxlength="100" required />
-          <select id="contentPlatform"><option>Instagram</option><option>LinkedIn</option><option>Stories</option><option>Reel</option><option>YouTube</option><option>Outro</option></select>
-          <select id="contentStatus"><option value="idea">Ideia</option><option value="producing">Em produção</option><option value="review">Aprovação</option><option value="scheduled">Agendado</option><option value="published">Publicado</option></select>
-          <input id="contentDate" type="datetime-local" />
-          <input id="contentLink" type="url" placeholder="Link do post / referência" />
-          <textarea id="contentNotes" placeholder="Legenda, briefing ou observações..." maxlength="500"></textarea>
-          <button class="primary-btn">Salvar conteúdo ✦</button>
-        </form>
-        <div class="content-toolbar"><input id="contentSearch" placeholder="Buscar conteúdo..." /><select id="contentFilter"><option value="all">Todos</option><option value="idea">Ideias</option><option value="producing">Em produção</option><option value="review">Aprovação</option><option value="scheduled">Agendados</option><option value="published">Publicados</option></select></div>
-        <div class="kanban" id="contentBoard"></div>
-      </section>
-
-      <section class="page" id="projects">
-        <div class="page-title"><span class="eyebrow">projects ♡</span><h1>Campanhas & projetos.</h1><p>Projetos editáveis com progresso, prazo e notas.</p></div>
-        <form id="projectForm" class="compact-form panel"><input id="projectName" placeholder="Nome do projeto" required /><input id="projectDeadline" type="date" /><input id="projectProgress" type="number" min="0" max="100" value="0" /><button class="primary-btn">Adicionar projeto</button></form>
-        <div class="project-grid" id="projectGrid"></div>
-      </section>
-
-      <section class="page" id="ideas">
-        <div class="page-title"><span class="eyebrow">idea garden ❀</span><h1>Plante ideias. Colha conteúdo.</h1><p>Guarde referências, pensamentos e formatos.</p></div>
-        <form id="ideaForm" class="big-idea-form"><textarea id="ideaInput" maxlength="240" placeholder="Qual foi a ideia que apareceu do nada?"></textarea><div><span id="ideaChars">0/240</span><button class="primary-btn">Plantar ideia ✿</button></div></form><div class="idea-grid" id="ideaGrid"></div>
-      </section>
-
-      <section class="page" id="analytics">
-        <div class="page-title"><span class="eyebrow">analytics ⌁</span><h1>Números que contam história.</h1><p>Até conectarmos a API da Meta, os dados podem ser atualizados manualmente aqui.</p></div>
-        <form id="metricsForm" class="metrics-form panel">
-          <label>Seguidores<input id="metricFollowers" type="number" min="0" /></label><label>Alcance<input id="metricReach" type="number" min="0" /></label><label>Engajamento (%)<input id="metricEngagement" type="number" min="0" step="0.1" /></label><label>Visitas ao perfil<input id="metricVisits" type="number" min="0" /></label><label>Publicações<input id="metricPosts" type="number" min="0" /></label><button class="primary-btn">Atualizar números</button>
-        </form>
-        <div class="stats-grid analytics-stats"><article class="stat-card pink"><span>seguidores</span><strong id="followersStat">0</strong><small>Instagram</small></article><article class="stat-card lilac"><span>alcance</span><strong id="reachStat">0</strong><small>período informado</small></article><article class="stat-card peach"><span>engajamento</span><strong id="engagementStat">0%</strong><small>taxa registrada</small></article><article class="stat-card cream"><span>publicações</span><strong id="postsStat">0</strong><small>registradas</small></article></div>
-        <article class="panel"><span class="eyebrow">histórico</span><h2>Snapshots de métricas</h2><div id="metricsHistory" class="history-list"></div></article>
-      </section>
-
-      <section class="page" id="planner">
-        <div class="page-title"><span class="eyebrow">planner ✓</span><h1>Tira da cabeça. Coloca aqui.</h1><p>Tarefas com prioridade, categoria, data e edição.</p></div>
-        <form id="taskForm" class="task-form"><input id="taskInput" maxlength="100" placeholder="Adicionar nova tarefa..." required /><select id="taskCategory"><option value="today">Hoje</option><option value="week">Essa semana</option><option value="waiting">Esperando alguém</option><option value="later">Depois</option></select><select id="taskPriority"><option value="normal">Normal</option><option value="high">Alta</option><option value="low">Baixa</option></select><input id="taskDate" type="date" /><button class="primary-btn">Adicionar</button></form><div class="task-board" id="taskBoard"></div>
-      </section>
-
-      <section class="page" id="links">
-        <div class="page-title"><span class="eyebrow">quick links ↗</span><h1>Atalhos que salvam cliques.</h1><p>Canva, Drive, Instagram, Meta Business Suite ou qualquer ferramenta da rotina.</p></div>
-        <form id="linkForm" class="compact-form panel"><input id="linkLabel" placeholder="Nome do link" required /><input id="linkUrl" type="url" placeholder="https://..." required /><select id="linkCategory"><option>Trabalho</option><option>Social</option><option>Pessoal</option><option>Referência</option></select><button class="primary-btn">Adicionar atalho</button></form><div class="link-grid" id="linkGrid"></div>
-      </section>
-
-      <section class="page" id="myspace">
-        <div class="page-title"><span class="eyebrow">my space ☾</span><h1>Nem tudo precisa ser trabalho.</h1><p>Um espaço privado para lembrar que existe vida fora do feed.</p></div>
-        <div class="personal-grid"><article class="panel personal-card"><span class="eyebrow">brain dump</span><h2>Tira isso da cabeça.</h2><textarea class="brain-dump" id="brainDump" placeholder="Escreve qualquer coisa aqui..."></textarea><small id="brainSaved">salvo automaticamente ♡</small></article><article class="panel personal-card"><span class="eyebrow">little list</span><h2>Coisas que quero fazer</h2><div id="personalList"></div><form id="personalForm" class="inline-form"><input id="personalInput" placeholder="Adicionar algo para você..." /><button class="icon-btn">＋</button></form></article></div>
-      </section>
-
-      <section class="page" id="settings">
-        <div class="page-title"><span class="eyebrow">make it yours ⚙</span><h1>Personalizar Iza Space.</h1><p>Nome, foto, textos e detalhes do hub ficam do jeitinho dela.</p></div>
-        <form id="profileForm" class="settings-grid">
-          <article class="panel profile-editor"><div class="profile-preview avatar-image" id="profilePreview">IZ</div><label class="upload-btn">Escolher foto<input id="profileImage" type="file" accept="image/*" hidden /></label><button type="button" class="text-btn" id="removePhotoBtn">remover foto</button></article>
-          <article class="panel settings-fields"><label>Nome<input id="profileName" maxlength="40" /></label><label>Apelido da saudação<input id="profileNickname" maxlength="20" /></label><label>Cargo / descrição<input id="profileRole" maxlength="60" /></label><label>Bio da Home<textarea id="profileBio" maxlength="240"></textarea></label><label>Lembrete da sidebar<input id="profileReminder" maxlength="120" /></label><label>Frase do card<input id="profileQuote" maxlength="180" /></label><button class="primary-btn">Salvar personalização ♡</button></article>
-        </form>
-        <article class="panel security-panel"><span class="eyebrow">owner lock</span><h2>Segurança local</h2><p>Troque o PIN usado para bloquear este navegador. Para privacidade real em hospedagem pública, conectaremos autenticação de servidor depois.</p><button class="ghost-btn" id="changePinBtn">Trocar PIN</button></article>
-      </section>
-    </main>
-  </div>
-
-  <div class="modal-backdrop" id="ideaModal" hidden><div class="modal"><button class="modal-close" id="modalClose">×</button><span class="eyebrow">quick idea ✦</span><h2>Antes que ela fuja...</h2><form id="modalIdeaForm"><textarea id="modalIdeaInput" maxlength="240" placeholder="Joga aqui."></textarea><button class="primary-btn">Salvar ideia</button></form></div></div>
-  <div class="toast" id="toast" aria-live="polite"></div>
-  <script src="script.js"></script>
+      <div class="login-foot" id="authNote">Login visual temporário • autenticação será definida depois</div>
+    </section>
+  </main>
+  <div class="transition-curtain" id="transitionCurtain" aria-hidden="true"></div>
+  <script src="login.js"></script>
 </body>
 </html>
