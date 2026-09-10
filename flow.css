@@ -1,0 +1,9 @@
+body { opacity: 0; animation: appEnter .34s ease forwards; }
+@keyframes appEnter { to { opacity: 1; } }
+.page { display: none; opacity: 0; transform: translateY(8px); }
+.page.active { display: block; animation: sectionIn .26s ease forwards; }
+@keyframes sectionIn { to { opacity: 1; transform: translateY(0); } }
+.exit-link { text-decoration: none; display: inline-flex; align-items: center; }
+.page-transition { position: fixed; inset: 0; background: linear-gradient(135deg,#fff7fb,#f8eaff); pointer-events: none; opacity: 0; z-index: 9999; transition: opacity .22s ease; }
+.page-transition.active { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
