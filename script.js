@@ -1,239 +1,90 @@
-const $ = (selector, scope = document) => scope.querySelector(selector);
-const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
+const $ = (s, scope = document) => scope.querySelector(s);
+const $$ = (s, scope = document) => [...scope.querySelectorAll(s)];
 
-const STORAGE = {
-  mood: 'iza-space:mood',
-  ideas: 'iza-space:ideas',
-  tasks: 'iza-space:tasks',
-  brain: 'iza-space:brain'
+const KEYS = {
+  mood:'iza-space:mood', ideas:'iza-space:ideas', tasks:'iza-space:tasks', brain:'iza-space:brain',
+  contents:'iza-space:contents', projects:'iza-space:projects', metrics:'iza-space:metrics', metricHistory:'iza-space:metric-history',
+  links:'iza-space:links', profile:'iza-space:profile', personal:'iza-space:personal', pinHash:'iza-space:pin-hash', pinSalt:'iza-space:pin-salt'
+};
+const uid = () => crypto.randomUUID?.() || `${Date.now()}-${Math.random()}`;
+const load = (key, fallback) => { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch { return fallback; } };
+const save = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+const escapeHTML = value => String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]));
+const fmt = n => Number(n || 0).toLocaleString('pt-BR');
+const toast = msg => { const el=$('#toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('show'),2200); };
+
+const defaults = {
+  profile:{name:'Izadora',nickname:'Iza',role:'Social Media • IBAP-RJ',bio:'Campanhas, ideias, tarefas e vida real no mesmo lugar — porque abrir 27 abas não conta como organização.',reminder:'Você não precisa transformar toda ideia em post hoje.',quote:'Conteúdo bom não precisa gritar. Precisa chegar na pessoa certa.',photo:''},
+  tasks:[{id:uid(),text:'Finalizar conteúdo prioritário',category:'today',priority:'high',date:'',done:false},{id:uid(),text:'Revisar legenda do Instagram',category:'today',priority:'normal',date:'',done:false},{id:uid(),text:'Receber aprovação da peça institucional',category:'waiting',priority:'normal',date:'',done:false}],
+  contents:[{id:uid(),title:'Carrossel institucional',platform:'Instagram',status:'producing',date:'',link:'',notes:'Conteúdo institucional da semana.'},{id:uid(),title:'Reel educativo',platform:'Reel',status:'review',date:'',link:'',notes:'Aguardando aprovação.'},{id:uid(),title:'Post da semana',platform:'Instagram',status:'scheduled',date:'',link:'',notes:'Programar no melhor horário.'}],
+  projects:[{id:uid(),name:'Jogo Responsável',deadline:'',progress:72},{id:uid(),name:'Institucional IBAP',deadline:'',progress:88}],
+  metrics:{followers:0,reach:0,engagement:0,visits:0,posts:0},
+  links:[{id:uid(),label:'Instagram IBAP-RJ',url:'https://www.instagram.com/',category:'Social'},{id:uid(),label:'Canva',url:'https://www.canva.com/',category:'Trabalho'},{id:uid(),label:'Google Drive',url:'https://drive.google.com/',category:'Trabalho'}]
 };
 
-const defaultTasks = [
-  { id: crypto.randomUUID(), text: 'Finalizar conteúdo prioritário', category: 'today', done: false },
-  { id: crypto.randomUUID(), text: 'Revisar legenda do Instagram', category: 'today', done: false },
-  { id: crypto.randomUUID(), text: 'Programar publicação das 18h', category: 'today', done: false },
-  { id: crypto.randomUUID(), text: 'Organizar referências da próxima campanha', category: 'week', done: false },
-  { id: crypto.randomUUID(), text: 'Receber aprovação da peça institucional', category: 'waiting', done: false },
-  { id: crypto.randomUUID(), text: 'Testar novo formato de reel', category: 'later', done: false }
-];
+let profile=load(KEYS.profile,defaults.profile), ideas=load(KEYS.ideas,[]), tasks=load(KEYS.tasks,defaults.tasks), contents=load(KEYS.contents,defaults.contents), projects=load(KEYS.projects,defaults.projects), metrics=load(KEYS.metrics,defaults.metrics), metricHistory=load(KEYS.metricHistory,[]), links=load(KEYS.links,defaults.links), personal=load(KEYS.personal,[]);
+let editingContent=null, editingProject=null, editingLink=null;
 
-const taskLabels = {
-  today: 'Hoje',
-  week: 'Essa semana',
-  waiting: 'Esperando alguém',
-  later: 'Depois'
-};
+function setPage(id){$$('.page').forEach(p=>p.classList.toggle('active',p.id===id));$$('.nav-link').forEach(b=>b.classList.toggle('active',b.dataset.page===id));$('#sidebar')?.classList.remove('open');window.scrollTo({top:0,behavior:'smooth'});}
+$$('.nav-link').forEach(b=>b.addEventListener('click',()=>setPage(b.dataset.page)));$$('[data-goto]').forEach(b=>b.addEventListener('click',()=>setPage(b.dataset.goto)));
+$('#menuBtn')?.addEventListener('click',()=>$('#sidebar').classList.toggle('open'));
 
-let ideas = load(STORAGE.ideas, []);
-let tasks = load(STORAGE.tasks, defaultTasks);
+document.addEventListener('click',e=>{if(innerWidth>820)return;const s=$('#sidebar'),m=$('#menuBtn');if(s?.classList.contains('open')&&!s.contains(e.target)&&!m.contains(e.target))s.classList.remove('open');});
 
-function load(key, fallback) {
-  try {
-    const value = localStorage.getItem(key);
-    return value ? JSON.parse(value) : fallback;
-  } catch {
-    return fallback;
-  }
-}
+function updateDateTime(){const now=new Date();$('#todayLabel').textContent=now.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});$('#clockLabel').textContent=now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});const h=now.getHours(),g=h<12?'good morning':h<18?'good afternoon':'good evening';$('#greetingLabel').textContent=`${g}, ${profile.nickname.toLowerCase()} ♡`;}
+setInterval(updateDateTime,30000);
 
-function save(key, value) {
-  localStorage.setItem(key, JSON.stringify(value));
-}
+function initials(name){return name.trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'IZ';}
+function paintAvatar(el){if(!el)return; if(profile.photo){el.textContent='';el.style.backgroundImage=`url(${profile.photo})`;}else{el.style.backgroundImage='';el.textContent=initials(profile.name);}}
+function applyProfile(){profile={...defaults.profile,...profile};$('#sidebarName').textContent=profile.name;$('#sidebarRole').textContent=profile.role;$('#heroBio').textContent=profile.bio;$('#reminderText').textContent=profile.reminder;$('#quoteCard').textContent=`“${profile.quote}”`;paintAvatar($('#sidebarAvatar'));paintAvatar($('#profilePreview'));$('#profileName').value=profile.name;$('#profileNickname').value=profile.nickname;$('#profileRole').value=profile.role;$('#profileBio').value=profile.bio;$('#profileReminder').value=profile.reminder;$('#profileQuote').value=profile.quote;updateDateTime();}
 
-function setPage(pageId) {
-  $$('.page').forEach(page => page.classList.toggle('active', page.id === pageId));
-  $$('.nav-link').forEach(link => link.classList.toggle('active', link.dataset.page === pageId));
-  $('#sidebar').classList.remove('open');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+$('#profileForm')?.addEventListener('submit',e=>{e.preventDefault();profile={...profile,name:$('#profileName').value.trim()||'Izadora',nickname:$('#profileNickname').value.trim()||'Iza',role:$('#profileRole').value.trim(),bio:$('#profileBio').value.trim(),reminder:$('#profileReminder').value.trim(),quote:$('#profileQuote').value.trim()};save(KEYS.profile,profile);applyProfile();toast('Personalização salva ♡');});
+$('#profileImage')?.addEventListener('change',e=>{const file=e.target.files?.[0];if(!file)return;const img=new Image(),reader=new FileReader();reader.onload=()=>img.src=reader.result;img.onload=()=>{const size=320,c=document.createElement('canvas'),ctx=c.getContext('2d');c.width=size;c.height=size;const scale=Math.max(size/img.width,size/img.height),w=img.width*scale,h=img.height*scale;ctx.drawImage(img,(size-w)/2,(size-h)/2,w,h);profile.photo=c.toDataURL('image/jpeg',.82);save(KEYS.profile,profile);applyProfile();toast('Foto atualizada ✿');};reader.readAsDataURL(file);});
+$('#removePhotoBtn')?.addEventListener('click',()=>{profile.photo='';save(KEYS.profile,profile);applyProfile();});
 
-$$('.nav-link').forEach(link => link.addEventListener('click', () => setPage(link.dataset.page)));
-$$('[data-goto]').forEach(button => button.addEventListener('click', () => setPage(button.dataset.goto)));
+function applyMood(mood,label){$('#moodFace').textContent=mood;$('#moodText').textContent=label;$$('.mood-options button').forEach(b=>b.classList.toggle('active',b.dataset.mood===mood));save(KEYS.mood,{mood,label});}
+$$('.mood-options button').forEach(b=>b.addEventListener('click',()=>applyMood(b.dataset.mood,b.dataset.label)));const savedMood=load(KEYS.mood,null);if(savedMood)applyMood(savedMood.mood,savedMood.label);
 
-$('#menuBtn').addEventListener('click', () => $('#sidebar').classList.toggle('open'));
-document.addEventListener('click', event => {
-  if (window.innerWidth > 820) return;
-  const sidebar = $('#sidebar');
-  const menu = $('#menuBtn');
-  if (sidebar.classList.contains('open') && !sidebar.contains(event.target) && !menu.contains(event.target)) {
-    sidebar.classList.remove('open');
-  }
-});
+function createIdea(text){text=text.trim();if(!text)return false;ideas.unshift({id:uid(),text,createdAt:new Date().toISOString()});save(KEYS.ideas,ideas);renderIdeas();return true;}
+function renderIdeas(){const grid=$('#ideaGrid');grid.innerHTML=ideas.length?ideas.map(i=>`<article class="idea-card"><p>${escapeHTML(i.text)}</p><footer><small>${new Date(i.createdAt).toLocaleDateString('pt-BR')}</small><button class="idea-delete" data-delete-idea="${i.id}">×</button></footer></article>`).join(''):`<div class="empty-state">Seu jardim ainda está vazio ✿</div>`;$('#ideaCount').textContent=ideas.length;}
+$('#ideaForm')?.addEventListener('submit',e=>{e.preventDefault();if(createIdea($('#ideaInput').value)){e.target.reset();$('#ideaChars').textContent='0/240';}});$('#ideaInput')?.addEventListener('input',e=>$('#ideaChars').textContent=`${e.target.value.length}/240`);$('#homeIdeaForm')?.addEventListener('submit',e=>{e.preventDefault();if(createIdea($('#homeIdeaInput').value)){$('#homeIdeaInput').value='';setPage('ideas');}});$('#ideaGrid')?.addEventListener('click',e=>{const b=e.target.closest('[data-delete-idea]');if(!b)return;ideas=ideas.filter(i=>i.id!==b.dataset.deleteIdea);save(KEYS.ideas,ideas);renderIdeas();});
+const modal=$('#ideaModal');$('#quickIdeaBtn')?.addEventListener('click',()=>{modal.hidden=false;setTimeout(()=>$('#modalIdeaInput').focus(),0)});$('#modalClose')?.addEventListener('click',()=>modal.hidden=true);modal?.addEventListener('click',e=>{if(e.target===modal)modal.hidden=true});$('#modalIdeaForm')?.addEventListener('submit',e=>{e.preventDefault();if(createIdea($('#modalIdeaInput').value)){$('#modalIdeaInput').value='';modal.hidden=true;}});
 
-function updateDateTime() {
-  const now = new Date();
-  $('#todayLabel').textContent = now.toLocaleDateString('pt-BR', {
-    weekday: 'long',
-    day: '2-digit',
-    month: 'long'
-  });
-  $('#clockLabel').textContent = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+const taskLabels={today:'Hoje',week:'Essa semana',waiting:'Esperando alguém',later:'Depois'};
+function renderTasks(){const board=$('#taskBoard');board.innerHTML=Object.entries(taskLabels).map(([cat,label])=>{const g=tasks.filter(t=>t.category===cat);return `<section class="task-column"><h3>${label}<span>${g.length}</span></h3><div>${g.length?g.map(t=>`<div class="task-item ${t.done?'done':''} priority-${t.priority||'normal'}"><input type="checkbox" ${t.done?'checked':''} data-toggle-task="${t.id}"><div class="task-copy"><label>${escapeHTML(t.text)}</label><small class="task-meta">${t.priority==='high'?'Alta prioridade • ':''}${t.date?new Date(t.date+'T12:00').toLocaleDateString('pt-BR'):''}</small></div><button class="mini-btn" data-edit-task="${t.id}">editar</button><button class="task-remove" data-remove-task="${t.id}">×</button></div>`).join(''):'<small style="color:#b79aa8">Nada aqui por enquanto ♡</small>'}</div></section>`}).join('');$('#todayTasksCount').textContent=tasks.filter(t=>t.category==='today'&&!t.done).length;}
+$('#taskForm')?.addEventListener('submit',e=>{e.preventDefault();const text=$('#taskInput').value.trim();if(!text)return;tasks.unshift({id:uid(),text,category:$('#taskCategory').value,priority:$('#taskPriority').value,date:$('#taskDate').value,done:false});save(KEYS.tasks,tasks);e.target.reset();renderTasks();toast('Tarefa adicionada ✓');});
+$('#taskBoard')?.addEventListener('change',e=>{const c=e.target.closest('[data-toggle-task]');if(!c)return;tasks=tasks.map(t=>t.id===c.dataset.toggleTask?{...t,done:c.checked}:t);save(KEYS.tasks,tasks);renderTasks();});
+$('#taskBoard')?.addEventListener('click',e=>{const del=e.target.closest('[data-remove-task]'),edit=e.target.closest('[data-edit-task]');if(del){tasks=tasks.filter(t=>t.id!==del.dataset.removeTask);save(KEYS.tasks,tasks);renderTasks();}if(edit){const t=tasks.find(x=>x.id===edit.dataset.editTask);const v=prompt('Editar tarefa:',t.text);if(v?.trim()){t.text=v.trim();save(KEYS.tasks,tasks);renderTasks();}}});
 
-  const hour = now.getHours();
-  const greeting = hour < 12 ? 'good morning, iza ♡' : hour < 18 ? 'good afternoon, iza ♡' : 'good evening, iza ♡';
-  const greetingEl = $('.hero-card .eyebrow');
-  if (greetingEl) greetingEl.textContent = greeting;
-}
-updateDateTime();
-setInterval(updateDateTime, 30000);
+const statusLabels={idea:'Ideia',producing:'Em produção',review:'Aprovação',scheduled:'Agendado',published:'Publicado'};
+function platformCode(p){return p==='LinkedIn'?'in':p==='Instagram'?'IG':p==='Stories'?'ST':p==='Reel'?'RE':'•';}
+function renderContents(){const filter=$('#contentFilter')?.value||'all',q=($('#contentSearch')?.value||'').toLowerCase();const visible=contents.filter(c=>(filter==='all'||c.status===filter)&&`${c.title} ${c.platform} ${c.notes}`.toLowerCase().includes(q));const cols=['idea','producing','review','scheduled','published'];$('#contentBoard').innerHTML=cols.map(st=>{const g=visible.filter(c=>c.status===st);return `<div class="kanban-col"><div class="kanban-title"><span>${statusLabels[st]}</span><b>${g.length}</b></div>${g.map(c=>`<div class="kanban-card"><small>${escapeHTML(c.platform).toUpperCase()}</small><strong>${escapeHTML(c.title)}</strong><p>${escapeHTML(c.notes||'Sem observações.')}</p>${c.date?`<span>🗓 ${new Date(c.date).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span>`:''}${c.link?`<a class="card-link" href="${escapeHTML(c.link)}" target="_blank" rel="noopener">abrir link ↗</a>`:''}<div class="card-actions"><button class="mini-btn" data-edit-content="${c.id}">Editar</button><button class="mini-btn danger" data-delete-content="${c.id}">Excluir</button></div></div>`).join('')||'<div class="empty-state">Nada aqui ♡</div>'}</div>`}).join('');renderHomeContent();}
+function clearContentForm(){editingContent=null;$('#contentForm').reset();$('#contentForm button').textContent='Salvar conteúdo ✦';}
+$('#contentForm')?.addEventListener('submit',e=>{e.preventDefault();const data={title:$('#contentTitle').value.trim(),platform:$('#contentPlatform').value,status:$('#contentStatus').value,date:$('#contentDate').value,link:$('#contentLink').value.trim(),notes:$('#contentNotes').value.trim()};if(editingContent){contents=contents.map(c=>c.id===editingContent?{...c,...data}:c);}else contents.unshift({id:uid(),...data});save(KEYS.contents,contents);clearContentForm();renderContents();toast('Conteúdo salvo ✦');});
+$('#contentBoard')?.addEventListener('click',e=>{const del=e.target.closest('[data-delete-content]'),edit=e.target.closest('[data-edit-content]');if(del){contents=contents.filter(c=>c.id!==del.dataset.deleteContent);save(KEYS.contents,contents);renderContents();}if(edit){const c=contents.find(x=>x.id===edit.dataset.editContent);editingContent=c.id;$('#contentTitle').value=c.title;$('#contentPlatform').value=c.platform;$('#contentStatus').value=c.status;$('#contentDate').value=c.date;$('#contentLink').value=c.link;$('#contentNotes').value=c.notes;$('#contentForm button').textContent='Atualizar conteúdo';$('#contentForm').scrollIntoView({behavior:'smooth'});}});$('#contentFilter')?.addEventListener('change',renderContents);$('#contentSearch')?.addEventListener('input',renderContents);
+function renderHomeContent(){if(!$('#homeContentList'))return;const active=contents.filter(c=>!['published','idea'].includes(c.status)).slice(0,4);$('#homeContentList').innerHTML=active.length?active.map(c=>`<div class="content-row"><div class="platform ig">${platformCode(c.platform)}</div><div><strong>${escapeHTML(c.title)}</strong><small>${escapeHTML(c.platform)}</small></div><span class="status ${c.status}">${statusLabels[c.status]}</span></div>`).join(''):'<div class="empty-state">Tudo tranquilo por aqui ✿</div>';$('#approvalCount').textContent=contents.filter(c=>c.status==='review').length;$('#scheduledCount').textContent=contents.filter(c=>['scheduled','published'].includes(c.status)).length;const upcoming=contents.filter(c=>c.date).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,4);$('#homeSchedule').innerHTML=upcoming.length?upcoming.map(c=>`<div class="timeline-item"><time>${new Date(c.date).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</time><span></span><div><strong>${escapeHTML(c.title)}</strong><small>${new Date(c.date).toLocaleDateString('pt-BR')} • ${escapeHTML(c.platform)}</small></div></div>`).join(''):'<div class="empty-state">Adicione datas aos conteúdos para montar sua agenda.</div>';}
 
-function applyMood(mood, label) {
-  $('#moodFace').textContent = mood;
-  $('#moodText').textContent = label;
-  $$('.mood-options button').forEach(btn => btn.classList.toggle('active', btn.dataset.mood === mood));
-  save(STORAGE.mood, { mood, label });
-}
+function renderProjects(){const grid=$('#projectGrid');grid.innerHTML=projects.length?projects.map(p=>`<article class="project-card"><div class="project-top"><span class="project-icon">♡</span><span class="status scheduled">${p.progress}%</span></div><h3>${escapeHTML(p.name)}</h3><small class="meta">${p.deadline?'Prazo: '+new Date(p.deadline+'T12:00').toLocaleDateString('pt-BR'):'Sem prazo definido'}</small><div class="progress"><span style="width:${Math.min(100,Math.max(0,p.progress))}%"></span></div><div class="card-actions"><button class="mini-btn" data-edit-project="${p.id}">Editar</button><button class="mini-btn danger" data-delete-project="${p.id}">Excluir</button></div></article>`).join(''):'<div class="empty-state">Nenhum projeto ainda.</div>';}
+$('#projectForm')?.addEventListener('submit',e=>{e.preventDefault();const data={name:$('#projectName').value.trim(),deadline:$('#projectDeadline').value,progress:Number($('#projectProgress').value||0)};if(editingProject)projects=projects.map(p=>p.id===editingProject?{...p,...data}:p);else projects.unshift({id:uid(),...data});save(KEYS.projects,projects);editingProject=null;e.target.reset();renderProjects();toast('Projeto salvo ♡');});
+$('#projectGrid')?.addEventListener('click',e=>{const del=e.target.closest('[data-delete-project]'),edit=e.target.closest('[data-edit-project]');if(del){projects=projects.filter(p=>p.id!==del.dataset.deleteProject);save(KEYS.projects,projects);renderProjects();}if(edit){const p=projects.find(x=>x.id===edit.dataset.editProject);editingProject=p.id;$('#projectName').value=p.name;$('#projectDeadline').value=p.deadline;$('#projectProgress').value=p.progress;$('#projectForm').scrollIntoView({behavior:'smooth'});}});
 
-$$('.mood-options button').forEach(button => {
-  button.addEventListener('click', () => applyMood(button.dataset.mood, button.dataset.label));
-});
+function renderMetrics(){$('#followersStat').textContent=fmt(metrics.followers);$('#reachStat').textContent=fmt(metrics.reach);$('#engagementStat').textContent=`${Number(metrics.engagement||0).toLocaleString('pt-BR')}%`;$('#postsStat').textContent=fmt(metrics.posts);$('#metricFollowers').value=metrics.followers;$('#metricReach').value=metrics.reach;$('#metricEngagement').value=metrics.engagement;$('#metricVisits').value=metrics.visits;$('#metricPosts').value=metrics.posts;$('#metricsHistory').innerHTML=metricHistory.length?metricHistory.slice(0,8).map((m,i)=>`<div class="history-row"><strong>${new Date(m.createdAt).toLocaleDateString('pt-BR')}</strong><span>Seguidores ${fmt(m.followers)}</span><span>Alcance ${fmt(m.reach)}</span><span>${m.engagement}% eng.</span><span>${fmt(m.visits)} visitas</span><span>${fmt(m.posts)} posts</span><button class="mini-btn danger" data-delete-snapshot="${i}">×</button></div>`).join(''):'<div class="empty-state">Seu primeiro snapshot aparecerá aqui.</div>';}
+$('#metricsForm')?.addEventListener('submit',e=>{e.preventDefault();metrics={followers:+$('#metricFollowers').value||0,reach:+$('#metricReach').value||0,engagement:+$('#metricEngagement').value||0,visits:+$('#metricVisits').value||0,posts:+$('#metricPosts').value||0};save(KEYS.metrics,metrics);metricHistory.unshift({...metrics,createdAt:new Date().toISOString()});save(KEYS.metricHistory,metricHistory);renderMetrics();toast('Métricas atualizadas ⌁');});$('#metricsHistory')?.addEventListener('click',e=>{const b=e.target.closest('[data-delete-snapshot]');if(!b)return;metricHistory.splice(Number(b.dataset.deleteSnapshot),1);save(KEYS.metricHistory,metricHistory);renderMetrics();});
 
-const savedMood = load(STORAGE.mood, null);
-if (savedMood) applyMood(savedMood.mood, savedMood.label);
+function renderLinks(){const grid=$('#linkGrid');grid.innerHTML=links.length?links.map(l=>`<article class="link-card"><a href="${escapeHTML(l.url)}" target="_blank" rel="noopener"><small>${escapeHTML(l.category)}</small><strong>${escapeHTML(l.label)}</strong><span>abrir ↗</span></a><footer><button class="mini-btn" data-edit-link="${l.id}">Editar</button><button class="mini-btn danger" data-delete-link="${l.id}">Excluir</button></footer></article>`).join(''):'<div class="empty-state">Adicione seus atalhos favoritos.</div>';}
+$('#linkForm')?.addEventListener('submit',e=>{e.preventDefault();const data={label:$('#linkLabel').value.trim(),url:$('#linkUrl').value.trim(),category:$('#linkCategory').value};if(editingLink)links=links.map(l=>l.id===editingLink?{...l,...data}:l);else links.unshift({id:uid(),...data});save(KEYS.links,links);editingLink=null;e.target.reset();renderLinks();toast('Atalho salvo ↗');});$('#linkGrid')?.addEventListener('click',e=>{const del=e.target.closest('[data-delete-link]'),edit=e.target.closest('[data-edit-link]');if(del){links=links.filter(l=>l.id!==del.dataset.deleteLink);save(KEYS.links,links);renderLinks();}if(edit){e.preventDefault();const l=links.find(x=>x.id===edit.dataset.editLink);editingLink=l.id;$('#linkLabel').value=l.label;$('#linkUrl').value=l.url;$('#linkCategory').value=l.category;$('#linkForm').scrollIntoView({behavior:'smooth'});}});
 
-function createIdea(text) {
-  const cleaned = text.trim();
-  if (!cleaned) return false;
-  ideas.unshift({
-    id: crypto.randomUUID(),
-    text: cleaned,
-    createdAt: new Date().toISOString()
-  });
-  save(STORAGE.ideas, ideas);
-  renderIdeas();
-  return true;
-}
+const brain=$('#brainDump');brain.value=localStorage.getItem(KEYS.brain)||'';let bt;brain?.addEventListener('input',()=>{clearTimeout(bt);$('#brainSaved').textContent='salvando...';bt=setTimeout(()=>{localStorage.setItem(KEYS.brain,brain.value);$('#brainSaved').textContent='salvo automaticamente ♡';},350)});
+function renderPersonal(){const el=$('#personalList');el.className='personal-list';el.innerHTML=personal.length?personal.map(i=>`<div class="personal-item ${i.done?'done':''}"><input type="checkbox" ${i.done?'checked':''} data-toggle-personal="${i.id}"><span>${escapeHTML(i.text)}</span><button class="mini-btn danger" data-delete-personal="${i.id}">×</button></div>`).join(''):'<small style="color:var(--muted)">Sua lista pessoal começa aqui ♡</small>';}
+$('#personalForm')?.addEventListener('submit',e=>{e.preventDefault();const v=$('#personalInput').value.trim();if(!v)return;personal.unshift({id:uid(),text:v,done:false});save(KEYS.personal,personal);e.target.reset();renderPersonal();});$('#personalList')?.addEventListener('change',e=>{const c=e.target.closest('[data-toggle-personal]');if(!c)return;personal=personal.map(i=>i.id===c.dataset.togglePersonal?{...i,done:c.checked}:i);save(KEYS.personal,personal);renderPersonal();});$('#personalList')?.addEventListener('click',e=>{const b=e.target.closest('[data-delete-personal]');if(!b)return;personal=personal.filter(i=>i.id!==b.dataset.deletePersonal);save(KEYS.personal,personal);renderPersonal();});
 
-function renderIdeas() {
-  const grid = $('#ideaGrid');
-  if (!ideas.length) {
-    grid.innerHTML = `<article class="idea-card"><p>Seu jardim está vazio por enquanto. Joga aquela primeira ideia aqui ✿</p><footer><small>comece sem pressão</small></footer></article>`;
-  } else {
-    grid.innerHTML = ideas.map(idea => {
-      const date = new Date(idea.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
-      return `<article class="idea-card" data-id="${idea.id}">
-        <p>${escapeHTML(idea.text)}</p>
-        <footer><small>${date}</small><button class="idea-delete" data-delete-idea="${idea.id}" aria-label="Excluir ideia">×</button></footer>
-      </article>`;
-    }).join('');
-  }
-  $('#ideaCount').textContent = ideas.length;
-}
+async function derivePin(pin,salt){const enc=new TextEncoder(),key=await crypto.subtle.importKey('raw',enc.encode(pin),'PBKDF2',false,['deriveBits']);const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:enc.encode(salt),iterations:120000,hash:'SHA-256'},key,256);return [...new Uint8Array(bits)].map(b=>b.toString(16).padStart(2,'0')).join('');}
+function authMode(){return localStorage.getItem(KEYS.pinHash)?'login':'setup';}
+function showLock(){sessionStorage.removeItem('iza-space:unlocked');$('#appShell').hidden=true;$('#lockScreen').hidden=false;const setup=authMode()==='setup';$('#lockTitle').textContent=setup?'Crie seu acesso':'Iza Space';$('#lockText').textContent=setup?'Escolha um PIN para proteger este navegador.':'Entre no seu espaço pessoal.';$('#lockPinConfirm').hidden=!setup;$('#lockSubmit').textContent=setup?'Criar meu PIN ♡':'Entrar ♡';$('#lockPin').value='';$('#lockPinConfirm').value='';}
+function unlock(){sessionStorage.setItem('iza-space:unlocked','1');$('#lockScreen').hidden=true;$('#appShell').hidden=false;applyProfile();renderAll();}
+$('#lockForm')?.addEventListener('submit',async e=>{e.preventDefault();const pin=$('#lockPin').value;if(pin.length<4){toast('Use pelo menos 4 dígitos/caracteres.');return;}if(authMode()==='setup'){if(pin!==$('#lockPinConfirm').value){toast('Os PINs não conferem.');return;}const salt=uid();localStorage.setItem(KEYS.pinSalt,salt);localStorage.setItem(KEYS.pinHash,await derivePin(pin,salt));unlock();toast('Acesso criado ♡');}else{const hash=await derivePin(pin,localStorage.getItem(KEYS.pinSalt));if(hash===localStorage.getItem(KEYS.pinHash))unlock();else toast('PIN incorreto.');}});
+$('#lockNowBtn')?.addEventListener('click',showLock);$('#changePinBtn')?.addEventListener('click',()=>{if(confirm('Trocar o PIN? Você precisará criar um novo acesso agora.')){localStorage.removeItem(KEYS.pinHash);localStorage.removeItem(KEYS.pinSalt);showLock();}});
 
-$('#ideaForm').addEventListener('submit', event => {
-  event.preventDefault();
-  if (createIdea($('#ideaInput').value)) {
-    $('#ideaInput').value = '';
-    $('#ideaChars').textContent = '0/240';
-  }
-});
-
-$('#ideaInput').addEventListener('input', event => {
-  $('#ideaChars').textContent = `${event.target.value.length}/240`;
-});
-
-$('#homeIdeaForm').addEventListener('submit', event => {
-  event.preventDefault();
-  if (createIdea($('#homeIdeaInput').value)) {
-    $('#homeIdeaInput').value = '';
-    setPage('ideas');
-  }
-});
-
-$('#ideaGrid').addEventListener('click', event => {
-  const button = event.target.closest('[data-delete-idea]');
-  if (!button) return;
-  ideas = ideas.filter(idea => idea.id !== button.dataset.deleteIdea);
-  save(STORAGE.ideas, ideas);
-  renderIdeas();
-});
-
-const modal = $('#ideaModal');
-$('#quickIdeaBtn').addEventListener('click', () => {
-  modal.hidden = false;
-  setTimeout(() => $('#modalIdeaInput').focus(), 0);
-});
-$('#modalClose').addEventListener('click', () => modal.hidden = true);
-modal.addEventListener('click', event => {
-  if (event.target === modal) modal.hidden = true;
-});
-$('#modalIdeaForm').addEventListener('submit', event => {
-  event.preventDefault();
-  if (createIdea($('#modalIdeaInput').value)) {
-    $('#modalIdeaInput').value = '';
-    modal.hidden = true;
-    setPage('ideas');
-  }
-});
-document.addEventListener('keydown', event => {
-  if (event.key === 'Escape' && !modal.hidden) modal.hidden = true;
-});
-
-function renderTasks() {
-  const board = $('#taskBoard');
-  board.innerHTML = Object.entries(taskLabels).map(([category, label]) => {
-    const group = tasks.filter(task => task.category === category);
-    return `<section class="task-column">
-      <h3>${label}<span>${group.length}</span></h3>
-      <div>${group.length ? group.map(task => `
-        <div class="task-item ${task.done ? 'done' : ''}" data-task="${task.id}">
-          <input type="checkbox" ${task.done ? 'checked' : ''} data-toggle-task="${task.id}" aria-label="Concluir tarefa">
-          <label>${escapeHTML(task.text)}</label>
-          <button class="task-remove" data-remove-task="${task.id}" aria-label="Excluir tarefa">×</button>
-        </div>`).join('') : '<small style="color:#b79aa8">Nada aqui por enquanto ♡</small>'}</div>
-    </section>`;
-  }).join('');
-  $('#todayTasksCount').textContent = tasks.filter(task => task.category === 'today' && !task.done).length;
-}
-
-$('#taskForm').addEventListener('submit', event => {
-  event.preventDefault();
-  const input = $('#taskInput');
-  const text = input.value.trim();
-  if (!text) return;
-  tasks.unshift({ id: crypto.randomUUID(), text, category: $('#taskCategory').value, done: false });
-  save(STORAGE.tasks, tasks);
-  input.value = '';
-  renderTasks();
-});
-
-$('#taskBoard').addEventListener('change', event => {
-  const checkbox = event.target.closest('[data-toggle-task]');
-  if (!checkbox) return;
-  tasks = tasks.map(task => task.id === checkbox.dataset.toggleTask ? { ...task, done: checkbox.checked } : task);
-  save(STORAGE.tasks, tasks);
-  renderTasks();
-});
-
-$('#taskBoard').addEventListener('click', event => {
-  const button = event.target.closest('[data-remove-task]');
-  if (!button) return;
-  tasks = tasks.filter(task => task.id !== button.dataset.removeTask);
-  save(STORAGE.tasks, tasks);
-  renderTasks();
-});
-
-const brainDump = $('#brainDump');
-brainDump.value = localStorage.getItem(STORAGE.brain) || '';
-let brainTimer;
-brainDump.addEventListener('input', () => {
-  $('#brainSaved').textContent = 'salvando...';
-  clearTimeout(brainTimer);
-  brainTimer = setTimeout(() => {
-    localStorage.setItem(STORAGE.brain, brainDump.value);
-    $('#brainSaved').textContent = 'salvo automaticamente ♡';
-  }, 350);
-});
-
-function escapeHTML(value) {
-  return value.replace(/[&<>'"]/g, char => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    "'": '&#039;',
-    '"': '&quot;'
-  })[char]);
-}
-
-renderIdeas();
-renderTasks();
+function renderAll(){renderIdeas();renderTasks();renderContents();renderProjects();renderMetrics();renderLinks();renderPersonal();renderHomeContent();updateDateTime();}
+applyProfile();
+if(sessionStorage.getItem('iza-space:unlocked')==='1')unlock();else showLock();
